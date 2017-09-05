@@ -2,6 +2,10 @@
 # ----------------------------------------
 alias g8='nocorrect g8'
 
+# colorize grep in green
+alias grep='grep --color=auto'
+export GREP_COLOR='1;32'
+
 # directory helper
 # ----------------------------------------
 alias ..='cd ..'
