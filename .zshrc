@@ -10,8 +10,6 @@ for file in $HOME/.zsh/* ; do
     fi
 done
 
-source "${HOME}/.dotfiles/z/z.sh"
-
 # install instructions: https://github.com/bhilburn/powerlevel9k
 POWERLEVEL9K_MODE='nerdfont-complete'
 
