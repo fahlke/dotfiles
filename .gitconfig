@@ -1,0 +1,9 @@
+[user]
+	name = Alexander Fahlke
+	email = alexander.fahlke+git@gmail.com
+[alias]
+	ci = commit
+	st = status
+	br = branch
+[push]
+	default = simple
