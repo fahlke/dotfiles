@@ -74,9 +74,16 @@ source "$HOME/powerlevel9k/powerlevel9k.zsh-theme"
 
 # patched nerd-fonts must be installed for awesome-fontconfig to work properly
 # see: https://github.com/ryanoasis/nerd-fonts/releases/latest
+# for MacOS
 #mkdir -p /Users/alex/Library/Fonts/
 #curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v1.1.0/SourceCodePro.zip -o /tmp/SourceCodePro.zip
-#unzip /tmp/SourceCodePro.zip -d /Users/alex/Library/Fonts/
+#unzip /tmp/SourceCodePro.zip -d $HOME/Library/Fonts/
+
+# for Ubuntu
+#mkdir -p $HOME/.fonts
+#curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v1.1.0/SourceCodePro.zip -o /tmp/SourceCodePro.zip
+#unzip /tmp/SourceCodePro.zip -d $HOME/.fonts/
+#fc-cache -f -v $HOME/.fonts
 
 # iterm2 themes:
 #https://github.com/MartinSeeler/iterm2-material-design
