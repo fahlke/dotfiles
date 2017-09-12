@@ -10,12 +10,12 @@ fi
 
 # https://github.com/pyenv/pyenv-update
 if [[ ! -f "$HOME/.pyenv/plugins/pyenv-update/bin/pyenv-update" ]]; then
-    git clone git://github.com/pyenv/pyenv-update.git "$HOME/.pyenv/plugins/pyenv-update"
+    git clone https://github.com/pyenv/pyenv-update.git "$HOME/.pyenv/plugins/pyenv-update"
 fi
 
 # https://github.com/pyenv/pyenv-doctor
 if [[ ! -f "$HOME/.pyenv/plugins/pyenv-doctor/bin/pyenv-doctor" ]]; then
-    git clone git://github.com/yyuu/pyenv-doctor.git "$HOME/.pyenv/plugins/pyenv-doctor"
+    git clone https://github.com/yyuu/pyenv-doctor.git "$HOME/.pyenv/plugins/pyenv-doctor"
 fi
 
 export PYENV_ROOT="$HOME/.pyenv"
