@@ -23,3 +23,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+
+if [[ $DOTFILES_DEBUG -eq 1 ]]; then
+    echo "DEBUG: sourced pyenv.zsh"
+fi

@@ -52,6 +52,14 @@ zstyle ':completion:*:ssh:*' tag-order users 'hosts:-host hosts:-domain:domain h
 zstyle ':completion:*:ssh:*' group-order hosts-domain hosts-host users hosts-ipaddr
 zstyle '*' single-ignored show
 
+if [ $commands[kubectl] ]; then
+  source <(kubectl completion zsh)
+fi
+
+if [ $commands[minikube] ]; then
+  source <(minikube completion zsh)
+fi
+
 if [[ $DOTFILES_DEBUG -eq 1 ]]; then
     echo "DEBUG: sourced completion.zsh"
 fi

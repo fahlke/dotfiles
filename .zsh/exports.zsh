@@ -12,6 +12,17 @@ export EDITOR='subl -w'
 # CTAGS Sorting in VIM/Emacs is better behaved with this in place
 export LC_COLLATE=C
 
+# GOPATH export for sublime
+export GOPATH=$(go env GOPATH)
+
+export PATH="/usr/local/sbin:$PATH"
+export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+export GOROOT="/usr/local/opt/go/libexec"
+export GOPATH="$HOME/go"
+export PATH="$GOPATH/bin:$PATH"
+
+export HOMEBREW_NO_ANALYTICS=1
+
 if [[ $DOTFILES_DEBUG -eq 1 ]]; then
     echo "DEBUG: sourced exports.zsh"
 fi
