@@ -22,6 +22,9 @@ export GOROOT="/usr/local/opt/go/libexec"
 export GOPATH="$HOME/go"
 export PATH="$GOPATH/bin:$PATH"
 
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
 export HOMEBREW_NO_ANALYTICS=1
 
 if [[ $DOTFILES_DEBUG -eq 1 ]]; then
