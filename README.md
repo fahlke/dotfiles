@@ -38,6 +38,9 @@ My dotfiles for MacOS and Ubuntu including zsh configuration.
 
 ## iterm Themes
 
- - https://github.com/MartinSeeler/iterm2-material-design
- - or any of https://github.com/mbadolato/iTerm2-Color-Schemes
+    mkdir -p ~/.iterm-themes
+    curl -L https://raw.githubusercontent.com/mbadolato/iTerm2-Color-Schemes/master/schemes/Afterglow.itermcolors  -o $HOME/.iterm-themes/Afterglow.itermcolors
+
+... or any of https://github.com/mbadolato/iTerm2-Color-Schemes
+ 
 
