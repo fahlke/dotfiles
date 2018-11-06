@@ -7,3 +7,5 @@
 	br = branch
 [push]
 	default = simple
+[core]
+	editor = code --wait
