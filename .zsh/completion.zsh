@@ -1,3 +1,14 @@
+# if error message is "zsh compinit: insecure directories"
+# then run <chmod go-w "$(brew --prefix)/share"> and
+# clean the completition cache <rm -f ~/.zcompdump; compinit>
+# or set insecure compinit <autoload -U compinit && compinit -i> below
+# source: https://docs.brew.sh/Shell-Completion
+
+# add zsh-extensions from brew zsh-extensions
+if type brew &>/dev/null; then
+  fpath=($(brew --prefix)/share/zsh-completions $fpath)
+fi
+
 autoload -U compinit && compinit
 zmodload -i zsh/complist
 
