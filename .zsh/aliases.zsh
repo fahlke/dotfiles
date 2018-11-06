@@ -27,6 +27,10 @@ if [[ $IS_MAC -eq 1 ]]; then
     alias refreshbrew='brew outdated | while read cask; do brew upgrade $cask; done'
 fi
 
+# Intellij CLI aliases
+# ----------------------------------------
+alias goland='/usr/local/bin/goland'
+
 # Git
 # ----------------------------------------
 alias ga='git add'
