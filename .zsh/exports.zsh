@@ -13,6 +13,9 @@ export EDITOR='subl -w'
 # CTAGS Sorting in VIM/Emacs is better behaved with this in place
 export LC_COLLATE=C
 
+# enforce english
+export LANG=en_US.UTF-8
+
 # GOPATH export for sublime
 export GOPATH=$(go env GOPATH)
 
