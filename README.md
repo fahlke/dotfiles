@@ -10,16 +10,16 @@ My dotfiles for MacOS and Ubuntu including zsh configuration.
     curl -L https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark -o $HOME/.dircolors
 
     # make a backup of existing files
+    mv $HOME/.gitconfig $HOME/.gitconfig.bak
     mv $HOME/.zshrc $HOME/.zshrc.bak
     mv $HOME/.zshenv $HOME/.zshenv.bak
     mv $HOME/.zsh $HOME/.zsh.bak
-    mv $HOME/.gitconfig $HOME/.gitconfig.bak
 
-    # install new dotfiles
-    ln -s $HOME/.dotfiles/.zshrc $HOME/.zshrc
-    ln -s $HOME/.dotfiles/.zshenv $HOME/.zshenv
-    ln -s $HOME/.dotfiles/.zsh $HOME/.zsh
-    ln -s $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+    # symlink new dotfiles
+    ln -sf $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+    ln -sf $HOME/.dotfiles/.zshrc $HOME/.zshrc
+    ln -sf $HOME/.dotfiles/.zshenv $HOME/.zshenv
+    ln -sf $HOME/.dotfiles/.zsh $HOME/.zsh
 
     # Patched nerd-fonts must be installed for nerdfont-complete to work properly
     # see: https://github.com/ryanoasis/nerd-fonts/releases/latest
