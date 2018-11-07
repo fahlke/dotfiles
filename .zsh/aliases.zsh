@@ -25,8 +25,6 @@ if [[ $IS_MAC -eq 1 ]]; then
     alias apps='mdfind "kMDItemAppStoreHasReceipt=1"'
     # refresh brew by upgrading all outdated casks
     alias refreshbrew='brew outdated | while read cask; do brew upgrade $cask; done'
-    # copy output of `pwd` also to clipboard
-    alias pwd='pwd | tee >(pbcopy)'
 fi
 
 # Intellij CLI aliases
