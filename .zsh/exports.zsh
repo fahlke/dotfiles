@@ -1,6 +1,6 @@
 # Currently this path is appended to dynamically when picking a ruby version
 # zshenv has already started PATH with rbenv so append only here
-export PATH=$PATH:~/bin
+export PATH=$PATH:$HOME/bin
 export PATH=$PATH:/usr/local/go/bin
 
 # This resolves issues install the mysql, postgres, and other gems with native non universal binary extensions
@@ -23,9 +23,16 @@ export GOROOT="/usr/local/opt/go/libexec"
 export PATH="$GOPATH/bin:$PATH"
 
 export PATH="/usr/local/sbin:$PATH"
-export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
 
-export HOMEBREW_NO_ANALYTICS=1
+# add Visual Studio Code to PATH
+if [[ $IS_MAC -eq 1 ]]; then
+  export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+fi
+
+# disable Homebrew analytics
+if [[ $IS_MAC -eq 1 ]]; then
+  export HOMEBREW_NO_ANALYTICS=1
+fi
 
 if [[ $DOTFILES_DEBUG -eq 1 ]]; then
     echo "DEBUG: sourced exports.zsh"
