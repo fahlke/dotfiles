@@ -3,19 +3,24 @@ My dotfiles for MacOS and Ubuntu including zsh configuration.
 
 ## Installation
 
+### Prepare environment (MacOS only)
+
+Install Homebrew and Ansible, as well as my default set of tools and applications.
+
+    bash <(curl -fsSL http://sre.fahlke.io/homebrew/installation)
+    bash <(curl -fsSL http://sre.fahlke.io/ansible/installation)
+    ansible-playbook <(curl http://sre.fahlke.io/ansible/apps)
+    ansible-playbook <(curl http://sre.fahlke.io/ansible/zsh)
+
+### Setup dotfiles and configure ZSH
+
     git clone https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
 
     git clone https://github.com/bhilburn/powerlevel9k.git ~/powerlevel9k
 
     curl -L https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark -o $HOME/.dircolors
 
-    # make a backup of existing files
-    mv $HOME/.gitconfig $HOME/.gitconfig.bak
-    mv $HOME/.zshrc $HOME/.zshrc.bak
-    mv $HOME/.zshenv $HOME/.zshenv.bak
-    mv $HOME/.zsh $HOME/.zsh.bak
-
-    # symlink new dotfiles
+    # symlink new dotfiles (will overwrite any existing file)
     ln -sf $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
     ln -sf $HOME/.dotfiles/.zshrc $HOME/.zshrc
     ln -sf $HOME/.dotfiles/.zshenv $HOME/.zshenv
