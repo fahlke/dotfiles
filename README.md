@@ -14,7 +14,7 @@ Install Homebrew and Ansible, as well as my default set of tools and application
 
 ### Setup dotfiles and configure ZSH
 
-    git clone https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
+    git clone -b master https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
 
     git clone https://github.com/bhilburn/powerlevel9k.git ~/powerlevel9k
 
