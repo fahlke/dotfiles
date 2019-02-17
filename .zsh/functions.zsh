@@ -49,12 +49,32 @@ path() {
             print }"
 }
 
+# fix for "zsh compinit: insecure directories"
+fix-compaudit() {
+  compaudit | xargs chmod g-w
+  # or: chmod go-w "$(brew --prefix)/share"
+}
+
 # Mac specific functions
 # ----------------------------------------
 if [[ $IS_MAC -eq 1 ]]; then
     # view man pages in Preview
     pman() {
         ps=$(mktemp -t manpageXXXX).ps ; man -t $@ > "$ps" ; open "$ps" ;
+    }
+
+    # upgrade homebrew installed programs
+    brew-latest() {
+        if [[ -z "$1" ]] ; then
+            echo "brew-latest - upgrade all brew installed programs" >&2
+            echo "Usage: brew-latest all" >&2
+            return 1
+        elif [[ "$1" == "all" ]] ; then
+            brew update
+            brew upgrade;
+            brew cask upgrade;
+            return 0;
+        fi
     }
 fi
 
