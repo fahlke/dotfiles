@@ -20,6 +20,12 @@ My dotfiles for MacOS and Ubuntu including zsh configuration.
     ln -sf $HOME/.dotfiles/.zshrc $HOME/.zshrc
     ln -sf $HOME/.dotfiles/.zshenv $HOME/.zshenv
     ln -sf $HOME/.dotfiles/.zsh $HOME/.zsh
+    
+    # install zsh for Ubuntu
+    sudo apt-get install -y zsh
+    
+    # set default shell for current user to zsh
+    sudo chsh -s $(command -v zsh) $(whoami)
 
     # Patched nerd-fonts must be installed for nerdfont-complete to work properly
     # see: https://github.com/ryanoasis/nerd-fonts/releases/latest
@@ -30,6 +36,7 @@ My dotfiles for MacOS and Ubuntu including zsh configuration.
     unzip /tmp/SourceCodePro.zip -d $HOME/Library/Fonts/
 
     # for Ubuntu
+    sudo apt-get install -y unzip fontconfig
     mkdir -p $HOME/.fonts
     curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/SourceCodePro.zip -o /tmp/SourceCodePro.zip
     unzip /tmp/SourceCodePro.zip -d $HOME/.fonts/
