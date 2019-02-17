@@ -1,6 +1,6 @@
 ---
 
-# usage: ansible-playbook <(curl http://sre.fahlke.io/ansible/apps)
+# usage: ansible-playbook <(curl -fsSL http://sre.fahlke.io/ansible/apps)
 
 - name: "Homebrew | Install MacOS packages with Homebrew"
   hosts: localhost

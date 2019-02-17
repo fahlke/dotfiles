@@ -9,8 +9,8 @@ Install Homebrew and Ansible, as well as my default set of tools and application
 
     bash <(curl -fsSL http://sre.fahlke.io/homebrew/installation)
     bash <(curl -fsSL http://sre.fahlke.io/ansible/installation)
-    ansible-playbook <(curl http://sre.fahlke.io/ansible/apps)
-    ansible-playbook <(curl http://sre.fahlke.io/ansible/zsh)
+    ansible-playbook <(curl -fsSL http://sre.fahlke.io/ansible/apps)
+    ansible-playbook <(curl -fsSL http://sre.fahlke.io/ansible/zsh)
 
 ### Setup dotfiles and configure ZSH
 
