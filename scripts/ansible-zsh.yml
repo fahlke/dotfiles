@@ -1,6 +1,6 @@
 ---
 
-# usage: ansible-playbook <(curl http://sre.fahlke.io/ansible/zsh)
+# usage: ansible-playbook <(curl -fsSL http://sre.fahlke.io/ansible/zsh)
 
 - name: "Z shell | Configure zsh"
   hosts: localhost
