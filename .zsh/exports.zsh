@@ -17,16 +17,13 @@ export LC_COLLATE=C
 export LANG=en_US.UTF-8
 
 # GOPATH export for sublime
-export GOPATH=$(go env GOPATH)
+#export GOPATH=$(go env GOPATH)
+export GOPATH="$HOME/go"
+export GOROOT="/usr/local/opt/go/libexec"
+export PATH="$GOPATH/bin:$PATH"
 
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
-export GOROOT="/usr/local/opt/go/libexec"
-export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
-
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
 
 export HOMEBREW_NO_ANALYTICS=1
 
