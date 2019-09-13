@@ -1,7 +1,7 @@
 # Change the variables below as desired
 declare -g MINIKUBE_K8S_VERSION='v1.14.4'
 declare -g MINIKUBE_CPUS='2'
-declare -g MINIKUBE_MEMORY='3072m'
+declare -g MINIKUBE_MEMORY='3072'
 declare -g MINIKUBE_CLUSTER_DOMAIN='cluster.local'
 declare -g MINIKUBE_VMDRIVER='virtualbox'
 # check https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/#overview
