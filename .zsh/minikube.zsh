@@ -1,11 +1,10 @@
-declare -g MINIKUBE_PROFILE='localdev'
-# https://github.com/kubernetes/kubernetes/releases (successfully tested used v1.14.7)
+declare -g MINIKUBE_PROFILE='minikube'
+# https://github.com/kubernetes/kubernetes/releases (successfully tested used v1.16.11)
 # Check NewestKubernetesVersion & OldestKubernetesVersion in constants.go
 # https://github.com/kubernetes/minikube/blob/master/pkg/minikube/constants/constants.go
-#declare -g MINIKUBE_K8S_VERSION='v1.14.7'
-declare -g MINIKUBE_K8S_VERSION='v1.16.5'
-declare -g MINIKUBE_CPUS='4'
-declare -g MINIKUBE_MEMORY='6144'
+declare -g MINIKUBE_K8S_VERSION='v1.16.11'
+declare -g MINIKUBE_CPUS='6'
+declare -g MINIKUBE_MEMORY='10240'
 declare -g MINIKUBE_DISKSIZE='100g'
 declare -g MINIKUBE_CLUSTER_DOMAIN='cluster.local'
 # https://minikube.sigs.k8s.io/docs/reference/drivers/hyperkit/
@@ -14,18 +13,24 @@ declare -g MINIKUBE_VMDRIVER='hyperkit'
 # https://github.com/kubernetes/kubernetes/issues/27140
 # https://stupefied-goodall-e282f7.netlify.com/contributors/design-proposals/node/troubleshoot-running-pods/
 # from 1.16 (Alpha)
-#declare -g MINIKUBE_FEATURE_GATES='EphemeralContainers=true'
-declare -g MINIKUBE_FEATURE_GATES=''
+declare -g MINIKUBE_FEATURE_GATES='EphemeralContainers=true,HPAScaleToZero=true'
+# https://v1-16.docs.kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#which-plugins-are-enabled-by-default
+# Configured are the defaults and additionally the Alpha feature "PodPreset Admission Controller Plugin"
+declare -g APISERVER_ADMISSION_CONTROLLER="NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,StorageObjectInUseProtection,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,RuntimeClass,ResourceQuota,PodPreset"
 declare -g KUBELET_MAX_PODS='150'
 
-# https://github.com/cilium/cilium/releases
-declare -g CILIUM_VERSION='1.6.3'
+declare -g POD_CIDR='10.4.0.0/19'
 
-# https://github.com/projectcalico/calico/releases
-declare -g CALICO_VERSION='3.10'
+# https://github.com/cilium/cilium/releases
+declare -g CILIUM_HELM_VERSION='1.8.0'
+declare -g CILIUM_ENABLED='true'
 
 # https://github.com/kubernetes/minikube/issues/3036
 declare -g NAMESERVER_PATCH_IP='1.1.1.1'
+
+__minikube-refresh-functions() {
+  source $HOME/.zsh/minikube.zsh
+}
 
 __minikube-check-dependencies(){
   if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
@@ -42,7 +47,51 @@ __minikube-check-dependencies(){
   minikube profile "${MINIKUBE_PROFILE}"
 }
 
-minikube-up() {
+minikube-up-docker() {
+  __minikube-refresh-functions || true
+  __minikube-check-dependencies || return 1
+
+  minikube start \
+    --kubernetes-version "${MINIKUBE_K8S_VERSION}" \
+    --cpus               "${MINIKUBE_CPUS}" \
+    --memory             "${MINIKUBE_MEMORY}" \
+    --disk-size          "${MINIKUBE_DISKSIZE}" \
+    --dns-domain         "${MINIKUBE_CLUSTER_DOMAIN}" \
+    --vm-driver          "${MINIKUBE_VMDRIVER}" \
+    --feature-gates      "${MINIKUBE_FEATURE_GATES}" \
+    --extra-config       "kubeadm.pod-network-cidr=${POD_CIDR}" \
+    --extra-config       "kubelet.max-pods=${KUBELET_MAX_PODS}" \
+    --extra-config       "kubelet.authentication-token-webhook=true" \
+    --extra-config       "kubelet.authorization-mode=Webhook" \
+    --extra-config       "scheduler.address=0.0.0.0" \
+    --extra-config       "controller-manager.allocate-node-cidrs=true" \
+    --extra-config       "controller-manager.address=0.0.0.0" \
+    --extra-config       "apiserver.runtime-config=settings.k8s.io/v1alpha1=true" \
+    --extra-config       "apiserver.enable-admission-plugins=${APISERVER_ADMISSION_CONTROLLER}" \
+    --network-plugin     "cni" \
+    --bootstrapper       "kubeadm" \
+    --enable-default-cni \
+    --disable-driver-mounts
+
+  __minikube-etc-resolv-patch
+
+  if [[ "${CILIUM_ENABLED}" == 'true' ]]; then
+    echo "👉  installing 'Cilium' overlay network"
+    __minikube-cilium-network-docker
+    ##__minikube-cilium-service-mesh-istio
+    echo "✅  cluster network set to 'Cilium (${CILIUM_HELM_VERSION})'"
+  else
+    echo "✅  cluster network set to 'minikube default'"
+  fi
+
+  __minikube-addon-registry
+
+  echo "✅  minikube successfully started with docker runtime"
+}
+
+
+minikube-up-crio() {
+  __minikube-refresh-functions || true
   __minikube-check-dependencies || return 1
 
   minikube start \
@@ -55,32 +104,47 @@ minikube-up() {
     --feature-gates      "${MINIKUBE_FEATURE_GATES}" \
     --container-runtime  "crio" \
     --cri-socket         "/var/run/crio/crio.sock" \
+    --extra-config       "kubeadm.pod-network-cidr=${POD_CIDR}" \
     --extra-config       "kubelet.container-runtime=remote" \
     --extra-config       "kubelet.container-runtime-endpoint=/var/run/crio/crio.sock" \
     --extra-config       "kubelet.image-service-endpoint=/var/run/crio/crio.sock" \
     --extra-config       "kubelet.max-pods=${KUBELET_MAX_PODS}" \
+    --extra-config       "kubelet.authentication-token-webhook=true" \
+    --extra-config       "kubelet.authorization-mode=Webhook" \
+    --extra-config       "scheduler.address=0.0.0.0" \
+    --extra-config       "controller-manager.allocate-node-cidrs=true" \
+    --extra-config       "controller-manager.address=0.0.0.0" \
+    --extra-config       "apiserver.enable-admission-plugins=${APISERVER_ADMISSION_CONTROLLER}" \
     --network-plugin     "cni" \
     --bootstrapper       "kubeadm" \
     --enable-default-cni \
     --disable-driver-mounts
 
   __minikube-etc-resolv-patch
-  __minikube-addon-registry
-#  __minikube-network-calico
-#  __minikube-service-mesh-istio-calico
-  ##__minikube-network-cilium
-  ##__minikube-service-mesh-istio-cilium
 
-  echo "✅  minikube successfully started"
+  if [[ "${CILIUM_ENABLED}" == 'true' ]]; then
+    echo "👉  installing 'Cilium' overlay network"
+    ##__minikube-cilium-network-crio
+    ##__minikube-cilium-service-mesh-istio
+    echo "✅  cluster network set to 'Cilium (${CILIUM_HELM_VERSION})'"
+  else
+    echo "✅  cluster network set to 'minikube default'"
+  fi
+
+  __minikube-addon-registry
+
+  echo "✅  minikube successfully started with cri-o runtime"
 }
 
 minikube-stop() {
+  __minikube-refresh-functions || true
   __minikube-check-dependencies || return 1
 
   minikube stop
 }
 
 minikube-destroy() {
+  __minikube-refresh-functions || true
   __minikube-check-dependencies || return 1
 
   minikube delete
@@ -120,112 +184,20 @@ data:
 EOF
 
   # patch CoreDNS
-  brew list yq &>/dev/null || brew install yq
-  /bin/bash <(curl -fsSL https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/patch-coredns.sh)
+  kubectl create -f https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/registry-aliases-sa.yaml
+  kubectl create -f https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/registry-aliases-sa-crb.yaml
+  kubectl create -f https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/patch-coredns-job.yaml
 
   # create DaemonSet to patch /etc/hosts on the Minikube Host VM
   kubectl create -f https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/node-etc-hosts-update.yaml
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'app=registry-aliases-hosts-update'
-}
-
-__minikube-network-calico() {
-  # https://cloud.google.com/blog/products/gcp/network-policy-support-for-kubernetes-with-calico
-  # https://cloud.google.com/kubernetes-engine/docs/how-to/network-policy#creating_a_network_policy
-  # https://docs.projectcalico.org/v3.10/introduction/deployments
-  # http://info.tigera.io/rs/805-GFH-732/images/ProjectCalico-Datasheet.pdf
-  echo "⌛  setting up Calico network"
-  kubectl create -f "https://docs.projectcalico.org/v${CALICO_VERSION}/manifests/calico.yaml" || return 1
-  sleep 10
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=calico-node'
-
-  minikube ssh -- 'sudo systemctl restart crio'
-
-  kubectl -n kube-system delete pod -l 'k8s-app=calico-node'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=calico-node'
-
-  kubectl -n kube-system delete pod -l 'k8s-app=kube-dns'
-  kubectl -n kube-system delete pod -l 'kubernetes.io/minikube-addons=registry'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=kube-dns'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'kubernetes.io/minikube-addons=registry'
-}
-
-__minikube-service-mesh-istio-calico() {
-  # FYI: GKE setup https://istio.io/docs/setup/additional-setup/cni/#gke-setup
-  # Helm Chart options: https://istio.io/docs/reference/config/installation-options/#sidecarinjectorwebhook-options
-  # Helm Chart CNI options: https://istio.io/docs/setup/additional-setup/cni/#helm-chart-parameters
-  export ISTIO_VERSION='1.3.3'
-  export ISTIO_NAMESPACE='istio-system'
-  export ISTIO_HOME="$HOME/bin/istio-${ISTIO_VERSION}"
-  export PATH="$PATH:${ISTIO_HOME}/bin"
-
-  ###### download the Istio release
-  #####mkdir -p $HOME/bin
-  #####pushd $HOME/bin
-  #####  curl -fsSL https://git.io/getLatestIstio | sh -
-  #####popd
-
-  echo "⌛  installing Istio ${ISTIO_VERSION}"
-  # install Istio CNI plugin
-  helm template \
+  kubectl wait \
+    --for       'condition=Ready' \
+    --timeout   '5m0s' \
     --namespace 'kube-system' \
-    --set 'logLevel=info' \
-    --set 'excludeNamespaces={"istio-system,kube-system"}' \
-    istio-cni \
-    ${ISTIO_HOME}/install/kubernetes/helm/istio-cni | kubectl create -f -
-  kubectl -n 'kube-system' wait pod \
-    -l 'k8s-app=istio-cni-node' \
-    --for condition=Ready \
-    --timeout 600s
-  # restart cri-o so the Istio CNI plugin is loaded
-  minikube ssh -- 'sudo systemctl restart crio'
-  sleep 5
+    pod -l 'app=registry-aliases-hosts-update'
 
-  # create Istio namespace
-  kubectl create namespace "${ISTIO_NAMESPACE}"
-
-  # install Istio CRDs
-  helm template \
-    --namespace "${ISTIO_NAMESPACE}" \
-    istio-init \
-    ${ISTIO_HOME}/install/kubernetes/helm/istio-init | kubectl create -f -
-  echo -n "⌛ waiting for CRDs to be ready..."
-  while [ "$(kubectl get crds | grep 'istio.io\|certmanager.k8s.io' | wc -l | tr -d ' ')" != "23" ]; do
-    echo -n "."
-    sleep 5
-  done
-  echo ""
-  sleep 60
-
-  # install Istio
-  helm template \
-    --validate \
-    --namespace "${ISTIO_NAMESPACE}" \
-    --set 'istio_cni.enabled=true' \
-    --set 'sidecarInjectorWebhook.enabled=true' \
-    --set 'sidecarInjectorWebhook.replicaCount=1' \
-    --set 'sidecarInjectorWebhook.rewriteAppHTTPProbe=false' \
-    --set 'global.k8sIngress.enabled=true' \
-    --set 'global.mtls.enabled=true' \
-    --set 'global.controlPlaneSecurityEnabled=false' \
-    --set 'kiali.enabled=true' \
-    --set 'kiali.ingress.enabled=true' \
-    --set 'kiali.createDemoSecret=true' \
-    --set 'prometheus.enabled=true' \
-    --set 'prometheus.ingress.enabled=true' \
-    --set 'grafana.enabled=true' \
-    --set 'grafana.ingress.enabled=true' \
-    --set 'istiocoredns.enabled=true' \
-    --set 'tracing.enabled=true' \
-    --set 'gateways.enabled=true' \
-    --set 'gateways.istio-ingressgateway.enabled=true' \
-    --set 'gateways.istio-ingressgateway.autoscaleEnabled=true' \
-    --set 'gateways.istio-egressgateway.enabled=true' \
-    --set 'gateways.istio-egressgateway.autoscaleEnabled=true' \
-    --set 'pilot.autoscaleEnabled=true' \
-    --set 'mixer.policy.autoscaleEnabled=true' \
-    --set 'mixer.telemetry.autoscaleEnabled=true' \
-    istio \
-    ${ISTIO_HOME}/install/kubernetes/helm/istio | kubectl create -f -
+  # remove CoreDNS patch job
+  kubectl delete -f https://raw.githubusercontent.com/kameshsampath/minikube-helpers/master/registry/patch-coredns-job.yaml
 }
 
 __minikube-etc-resolv-patch() {
@@ -240,7 +212,48 @@ __minikube-etc-resolv-patch() {
 
 }
 
-__minikube-network-cilium() {
+__minikube-cilium-network-docker() {
+  # https://docs.cilium.io/en/latest/kubernetes/configuration
+  # https://docs.cilium.io/en/latest/configuration/metrics/
+  # https://docs.cilium.io/en/latest/gettingstarted/istio/
+  minikube ssh -- "grep -qs '/sys/fs/bpf' /proc/mounts || sudo mount bpffs -t bpf /sys/fs/bpf" || return 1
+
+  # https://docs.cilium.io/en/v1.8/gettingstarted/encryption/
+  kubectl create -n kube-system secret generic cilium-ipsec-keys \
+    --from-literal=keys="3 rfc4106(gcm(aes)) $(echo $(dd if=/dev/urandom count=20 bs=1 2> /dev/null| xxd -p -c 64)) 128"
+
+  helm repo add cilium https://helm.cilium.io/
+  helm repo update
+
+  # https://github.com/cilium/cilium/blob/v1.8.0/install/kubernetes/cilium/values.yaml
+  helm install cilium cilium/cilium \
+    --atomic \
+    --timeout '15m0s' \
+    --version "${CILIUM_HELM_VERSION}" \
+    --namespace 'kube-system' \
+    --set 'preflight.enabled=true' \
+    --set 'global.psp.enabled=true' \
+    --set 'global.etcd.enabled=true' \
+    --set 'global.etcd.managed=true' \
+    --set "global.etcd.clusterDomain=${MINIKUBE_CLUSTER_DOMAIN}" \
+    --set 'global.etcd.clusterSize=1' \
+    --set 'global.prometheus.enabled=true' \
+    --set 'global.prometheus.serviceMonitor.enabled=true' \
+    --set 'global.operatorPrometheus.enabled=true' \
+    --set 'global.hubble.enabled=true' \
+    --set 'global.hubble.relay.enabled=true' \
+    --set 'global.hubble.ui.enabled=true' \
+    --set 'global.hubble.metrics.enabled={dns:query;ignoreAAAA,drop,tcp,flow,port-distribution,icmp,http}' \
+    --set 'global.hubble.metrics.serviceMonitor.enabled=true' \
+    --set 'global.hubble.listenAddress=:4244' \
+    --set 'global.bpf.waitForMount=true' \
+    --set 'global.encryption.enabled=false' \
+    --set 'global.encryption.nodeEncryption=false' \
+    --set 'global.nodeinit.enabled=true' \
+    --set 'global.containerRuntime.integration=docker'
+}
+
+__minikube-network-cilium-crio() {
   # https://docs.cilium.io/en/latest/kubernetes/configuration
   # https://docs.cilium.io/en/latest/configuration/metrics/
   # https://docs.cilium.io/en/latest/gettingstarted/istio/
@@ -260,25 +273,41 @@ __minikube-network-cilium() {
     kubectl create -f cilium.yaml
   popd
   rm -rf /tmp/cilium-${CILIUM_VERSION}
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=cilium'
+  kubectl wait \
+    --for       condition=Ready \
+    --timeout   600s \
+    --namespace kube-system \
+    pod -l 'k8s-app=cilium'
 
   minikube ssh -- 'sudo systemctl restart crio'
 
   kubectl -n kube-system delete pod -l 'k8s-app=cilium'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=cilium'
+  kubectl wait \
+    --for       condition=Ready \
+    --timeout   600s \
+    --namespace kube-system \
+    pod -l 'k8s-app=cilium'
 
   kubectl -n kube-system delete pod -l 'k8s-app=kube-dns'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'k8s-app=kube-dns'
+  kubectl wait \
+    --for       condition=Ready \
+    --timeout   600s \
+    --namespace kube-system \
+    pod -l 'k8s-app=kube-dns'
 
   kubectl -n kube-system delete pod -l 'kubernetes.io/minikube-addons=registry'
-  kubectl -n kube-system wait --timeout 600s --for condition=Ready pod -l 'kubernetes.io/minikube-addons=registry'
+  kubectl wait \
+    --for       condition=Ready \
+    --timeout   600s \
+    --namespace kube-system \
+    pod -l 'kubernetes.io/minikube-addons=registry'
 
   kubectl -n kube-system exec \
     $(kubectl -n kube-system get pod -l 'k8s-app=cilium' -ojsonpath='{.items[0].metadata.name}') \
     -- cilium endpoint list
 }
 
-__minikube-service-mesh-istio-cilium() {
+__minikube-cilium-service-mesh-istio() {
   # https://docs.cilium.io/en/v1.6/gettingstarted/istio/
   export ISTIO_VERSION=1.2.5
   curl -fsSL https://git.io/getLatestIstio | sh -
@@ -327,7 +356,11 @@ __minikube-service-mesh-istio-cilium() {
     > /tmp/istio-cilium.yaml
 
   kubectl create -f /tmp/istio-cilium.yaml
-  kubectl -n istio-system wait --timeout 600s --for condition=Available deployment -l 'release=istio'
+  kubectl wait \
+    --for       condition=Available \
+    --timeout   600s \
+    --namespace istio-system \
+    deployment -l 'release=istio'
 }
 
 __minikube-ingress-traefik() {
@@ -344,26 +377,6 @@ __minikube-ingress-traefik() {
   open "http://$(minikube ip):$(kubectl -n kube-system get svc traefik -ojsonpath='{ .spec.ports[0].nodePort }')/dashboard/#/"
 }
 
-__minikube-install-operators() {
-  curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.12.0/install.sh | bash -s 0.12.0
-  kubectl -n olm wait --timeout 600s --for condition=Ready pod -l 'app=packageserver'
-
-  kubectl create -f https://operatorhub.io/install/prometheus.yaml
-  kubectl create -f https://operatorhub.io/install/grafana-operator.yaml
-  # kubectl create -f https://operatorhub.io/install/istio.yaml
-  # kubectl create -f https://operatorhub.io/install/rook-ceph.yaml
-  # kubectl create -f https://operatorhub.io/install/vault.yaml
-  # kubectl create -f https://operatorhub.io/install/metering-upstream.yaml
-
-
-  kubectl get csv -n my-grafana-operator
-  kubectl get csv -n my-prometheus
-  # kubectl get csv -n operators
-  # kubectl get csv -n my-rook-ceph
-  # kubectl get csv -n my-vault
-  # kubectl get csv -n my-metering-upstream
-}
-
 #### # minikube registry example
 #### # https://minikube.sigs.k8s.io/docs/tasks/docker_registry/
 #### docker build --label "registry=minikube" --tag $(minikube ip):5000/k8stester:v1.0.0 .
@@ -376,3 +389,7 @@ __minikube-install-operators() {
 #### 
 #### kubectl run k8stester --image registry.local:80/k8stester:v1.0.0 --restart=Never
 #### kubectl delete pod k8stester
+
+
+#kubectl cluster-info dump | grep -m 1 service-cluster-ip-range
+#kubectl cluster-info dump | grep -m 1 cluster-cidr
