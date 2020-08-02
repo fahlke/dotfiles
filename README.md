@@ -1,13 +1,7 @@
 # dotfiles
-My dotfiles for MacOS and Ubuntu including zsh configuration.
+My dotfiles for macOS including zsh configuration.
 
 ## Installation
-
-### Prepare environment (MacOS only)
-
-Install Homebrew and my default set of tools and applications.
-
-    /bin/bash <(curl -fsSL http://sre.fahlke.io/apps)
 
 ### Setup dotfiles and configure ZSH
 
@@ -20,17 +14,9 @@ Install Homebrew and my default set of tools and applications.
     ln -sfn $HOME/.dotfiles/.zshenv    $HOME/.zshenv
     ln -sfn $HOME/.dotfiles/.zsh       $HOME/.zsh
 
-    curl -L https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark -o $HOME/.dircolors
+    $HOME/.dotfiles/scripts/apps
 
-    # install zsh for Ubuntu
-    sudo apt-get install -y zsh
-    
-    # for Ubuntu
-    sudo apt-get install -y unzip fontconfig
-    mkdir -p $HOME/.fonts
-    curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/SourceCodePro.zip -o /tmp/SourceCodePro.zip
-    unzip /tmp/SourceCodePro.zip -d $HOME/.fonts/
-    fc-cache -f -v $HOME/.fonts
+    curl -L https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark -o $HOME/.dircolors
 
 ## iTerm themes
 
