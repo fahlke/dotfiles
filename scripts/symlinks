@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+# symlink dotfiles (will overwrite any existing file)
+ln -sfn $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+ln -sfn $HOME/.dotfiles/.gitignore $HOME/.gitignore
+ln -sfn $HOME/.dotfiles/.zshrc     $HOME/.zshrc
+ln -sfn $HOME/.dotfiles/.zshenv    $HOME/.zshenv
+ln -sfn $HOME/.dotfiles/.zsh       $HOME/.zsh

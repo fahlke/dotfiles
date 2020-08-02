@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+# install dircolor scheme
+curl -fsL \
+  -o $HOME/.dircolors \
+  https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark
+
+# install iTerm themes
+mkdir -p ~/.iterm-themes
+curl -fsL \
+  -o $HOME/.iterm-themes/Afterglow.itermcolors \
+  https://raw.githubusercontent.com/mbadolato/iTerm2-Color-Schemes/master/schemes/Afterglow.itermcolors
+  # or use any of https://github.com/mbadolato/iTerm2-Color-Schemes
