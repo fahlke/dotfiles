@@ -13,15 +13,15 @@ Install Homebrew and my default set of tools and applications.
 
     git clone -b master https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
 
+    # symlink new dotfiles (will overwrite any existing file)
+    ln -sfn $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
+    ln -sfn $HOME/.dotfiles/.gitignore $HOME/.gitignore
+    ln -sfn $HOME/.dotfiles/.zshrc     $HOME/.zshrc
+    ln -sfn $HOME/.dotfiles/.zshenv    $HOME/.zshenv
+    ln -sfn $HOME/.dotfiles/.zsh       $HOME/.zsh
+
     curl -L https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark -o $HOME/.dircolors
 
-    # symlink new dotfiles (will overwrite any existing file)
-    ln -sf $HOME/.dotfiles/.gitconfig $HOME/.gitconfig
-    ln -sf $HOME/.dotfiles/.gitignore $HOME/.gitignore
-    ln -sf $HOME/.dotfiles/.zshrc $HOME/.zshrc
-    ln -sf $HOME/.dotfiles/.zshenv $HOME/.zshenv
-    ln -sf $HOME/.dotfiles/.zsh $HOME/.zsh
-    
     # install zsh for Ubuntu
     sudo apt-get install -y zsh
     
