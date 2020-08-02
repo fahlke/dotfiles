@@ -19,12 +19,12 @@ alias dus="du -sckx * | sort -nr" # directories sorted by size
 # Mac only
 # ----------------------------------------
 if [[ $IS_MAC -eq 1 ]]; then
-	# alias to open a file with MacOS Quick Look
-    alias ql='qlmanage -p 2>/dev/null'
-    # alias to show all Mac App store apps
-    alias apps='mdfind "kMDItemAppStoreHasReceipt=1"'
-    # refresh brew by upgrading all outdated casks
-    alias refreshbrew='brew outdated | while read cask; do brew upgrade $cask; done'
+  # alias to open a file with MacOS Quick Look
+  alias ql='qlmanage -p 2>/dev/null'
+  # alias to show all Mac App store apps
+  alias apps='mdfind "kMDItemAppStoreHasReceipt=1"'
+  # refresh brew by upgrading all outdated casks
+  alias refreshbrew='brew outdated | while read cask; do brew upgrade $cask; done'
 fi
 
 # Intellij CLI aliases

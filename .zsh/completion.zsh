@@ -4,6 +4,14 @@
 # or set insecure compinit <autoload -U compinit && compinit -i> below
 # source: https://docs.brew.sh/Shell-Completion
 
+if [ $commands[argo] ]; then
+  local ARGO_COMPLETION='/usr/local/share/zsh-completions/_argo'
+  if [ ! -f ${ARGO_COMPLETION} ]; then
+    echo "creating completion file"
+    argo completion zsh | tee >/dev/null ${ARGO_COMPLETION}
+  fi
+fi
+
 # add zsh-extensions from brew zsh-extensions
 if type brew &>/dev/null; then
   fpath=($(brew --prefix)/share/zsh-completions $fpath)
@@ -65,6 +73,10 @@ zstyle '*' single-ignored show
 
 if [ $commands[kubectl] ]; then
   source <(kubectl completion zsh)
+fi
+
+if [ $commands[helm] ]; then
+  source <(helm completion zsh)
 fi
 
 if [ $commands[minikube] ]; then

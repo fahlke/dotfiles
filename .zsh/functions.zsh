@@ -78,6 +78,12 @@ if [[ $IS_MAC -eq 1 ]]; then
     }
 fi
 
+# Initialize a new Ginkgo project
+ginkgo-init() {
+  ginkgo bootstrap # set up a new ginkgo suite
+  ginkgo generate  # will create a sample test file.  edit this file and add your tests then...
+}
+
 if [[ $DOTFILES_DEBUG -eq 1 ]]; then
     echo "DEBUG: sourced functions.zsh"
 fi
