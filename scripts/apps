@@ -1,0 +1,122 @@
+#!/bin/bash
+set -euo pipefail
+
+# usage: /bin/bash <(curl -fsSL http://sre.fahlke.io/apps)
+
+# temporary setup path for Homebrew
+export PATH="/usr/local/bin:$PATH"
+
+# define output colors
+readonly COLOR_RED='\033[0;31m'
+readonly COLOR_ORANGE='\033[0;33m'
+readonly COLOR_GREEN='\033[0;32m'
+readonly COLOR_RESET='\033[0m'
+
+# packages to install with Homebrew (the ! ignores exit code 1 from read)
+declare BREW_BUNDLE=""
+! read -r -d '' BREW_BUNDLE <<EOF
+# additional taps
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+tap "homebrew/cask-fonts"
+tap "romkatv/powerlevel10k"
+tap "golangci/tap"
+
+# programming languages and utilities
+brew "go"
+cask "goland"
+cask "visual-studio-code"
+cask "insomnia"
+cask "google-cloud-sdk"
+brew "golangci-lint"
+
+# kubernetes
+brew "kind"
+brew "helm"
+brew "kubectx"
+brew "skaffold"
+brew "kustomize"
+brew "kubernetes-cli", link: true
+brew "stern"
+brew "k9s"
+
+# system essentials
+cask "docker"
+brew "docker-completion"
+cask "1password"
+#cask "hyperswitch"
+#cask "hyperdock"
+cask "istat-menus"
+cask "iterm2"
+cask "zoomus"
+cask "slack"
+cask "spotify"
+cask "airserver"
+
+# system utilities
+brew "htop", url: 'https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-completions.rb'
+brew "zsh-completions", url: 'https://github.com/romkatv/powerlevel10k#homebrew'
+brew "powerlevel10k"
+brew "zsh-syntax-highlighting"
+brew "zsh-completions"
+brew "ansible"
+brew "arp-scan"
+brew "nmap"
+brew "jq"
+brew "pstree"
+brew "jsonnet", url: 'https://jsonnet.org'
+brew "pyenv"
+brew "terraform"
+brew "terraform-inventory"
+brew "terraform-provisioner-ansible"
+brew "git"
+brew "git-flow"
+brew "git-lfs"
+brew "wget"
+brew "xz", url: 'https://tukaani.org/xz/'
+brew "screen"
+brew "graphviz"
+brew "cfssl"
+brew "sqlite"
+brew "coreutils"
+brew "htop"
+brew "optipng"
+brew "p7zip"
+brew "imagemagick"
+brew "ipcalc"
+brew "yq"
+brew "readline"
+
+# fonts
+cask "font-sauce-code-pro-nerd-font"
+EOF
+
+# install Homebrew
+if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
+  echo -e "${COLOR_GREEN}Installing Homebrew (might need sudo)...${COLOR_RESET}"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+else
+  echo -e "${COLOR_ORANGE}Warning:${COLOR_RESET} Homebrew already installed, skipping installation..."
+fi
+
+# disable Homebrew analytics
+echo -e "${COLOR_GREEN}Disabling Homebrew analytics...${COLOR_RESET}"
+brew analytics off
+
+# verify Homebrew installation
+echo -e "${COLOR_GREEN}Verifying Homebrew installation...${COLOR_RESET}"
+brew doctor
+if [[ "$?" -ne 0 ]]; then
+  echo -e "${COLOR_RED}Error:${COLOR_RESET} Homebrew setup incomplete!"
+  exit 1
+fi
+
+brew update
+
+echo -e "${COLOR_GREEN}Installing applications with Homebrew...${COLOR_RESET}"
+brew bundle --no-lock --file=- <<<"${BREW_BUNDLE}"
+
+brew unlink kubernetes-cli && brew link --overwrite kubernetes-cli
+
+echo -e "${COLOR_GREEN}Ready to use Homebrew!${COLOR_RESET}"
