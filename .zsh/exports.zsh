@@ -25,8 +25,8 @@ export PATH="$GOPATH/bin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
 
 # gcloud
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
+#source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
+#source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
 
 # add Visual Studio Code to PATH
 if [[ $IS_MAC -eq 1 ]]; then

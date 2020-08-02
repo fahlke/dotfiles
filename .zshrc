@@ -1,6 +1,9 @@
 # enable debug mode for dotfiles
 DOTFILES_DEBUG=0
 
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+source /usr/local/opt/powerlevel10k/powerlevel10k.zsh-theme
+
 # suppress "Last login" message in MacOS
 [[ -f "$HOME/.hushlogin" ]] || touch "$HOME/.hushlogin"
 
