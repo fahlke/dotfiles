@@ -34,6 +34,7 @@ tap "homebrew/core"
 tap "homebrew/cask-fonts"
 tap "romkatv/powerlevel10k"
 tap "golangci/tap"
+tap "mas-cli/tap"
 
 # programming languages and utilities
 brew "go"
@@ -68,6 +69,7 @@ cask "spotify"
 cask "airserver"
 
 # system utilities
+brew "mas"
 brew "htop", url: 'https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-completions.rb'
 brew "zsh-completions", url: 'https://github.com/romkatv/powerlevel10k#homebrew'
 brew "powerlevel10k"
@@ -102,6 +104,19 @@ brew "readline"
 
 # fonts
 cask "font-sauce-code-pro-nerd-font"
+
+# audio tools
+cask "native-access"
+cask "spotify"
+
+# video tools
+mas "DaVinci Resolve", id: 571213070
+
+# office tools
+mas "Pages",   id: 409201541
+mas "Numbers", id: 409203825
+mas "Keynote", id: 409183694
+mas "Slack",   id: 803453959
 EOF
 
 # install Homebrew
