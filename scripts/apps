@@ -12,6 +12,18 @@ readonly COLOR_ORANGE='\033[0;33m'
 readonly COLOR_GREEN='\033[0;32m'
 readonly COLOR_RESET='\033[0m'
 
+function __info_msg() {
+  echo -e "${COLOR_GREEN}I:${COLOR_RESET} $1"
+}
+
+function __warning_msg() {
+  echo -e "${COLOR_ORANGE}W:${COLOR_RESET} $1"
+}
+
+function __error_msg() {
+  echo -e "${COLOR_RED}E:${COLOR_RESET} $1"
+}
+
 # packages to install with Homebrew (the ! ignores exit code 1 from read)
 declare BREW_BUNDLE=""
 ! read -r -d '' BREW_BUNDLE <<EOF
@@ -40,6 +52,7 @@ brew "kustomize"
 brew "kubernetes-cli", link: true
 brew "stern"
 brew "k9s"
+brew "kubebuilder"
 
 # system essentials
 cask "docker"
@@ -69,7 +82,6 @@ brew "jsonnet", url: 'https://jsonnet.org'
 brew "pyenv"
 brew "terraform"
 brew "terraform-inventory"
-brew "terraform-provisioner-ansible"
 brew "git"
 brew "git-flow"
 brew "git-lfs"
@@ -94,29 +106,29 @@ EOF
 
 # install Homebrew
 if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
-  echo -e "${COLOR_GREEN}Installing Homebrew (might need sudo)...${COLOR_RESET}"
+  __info_msg "Installing Homebrew (might need sudo)..."
   /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
-  echo -e "${COLOR_ORANGE}Warning:${COLOR_RESET} Homebrew already installed, skipping installation..."
+  __info_msg "Homebrew already installed, skipping installation..."
 fi
 
-# disable Homebrew analytics
-echo -e "${COLOR_GREEN}Disabling Homebrew analytics...${COLOR_RESET}"
+__info_msg "Disabling Homebrew analytics..."
 brew analytics off
 
-# verify Homebrew installation
-echo -e "${COLOR_GREEN}Verifying Homebrew installation...${COLOR_RESET}"
-brew doctor
-if [[ "$?" -ne 0 ]]; then
-  echo -e "${COLOR_RED}Error:${COLOR_RESET} Homebrew setup incomplete!"
-  exit 1
-fi
+__info_msg "Verifying Homebrew installation..."
+brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
 
-brew update
+__info_msg "Updating Homebrew..."
+brew update || (__error_msg "Homebrew update failed! Exiting!"; exit 1)
 
-echo -e "${COLOR_GREEN}Installing applications with Homebrew...${COLOR_RESET}"
+__info_msg "Installing formulae and casks with Homebrew..."
 brew bundle --no-lock --file=- <<<"${BREW_BUNDLE}"
-
 brew unlink kubernetes-cli && brew link --overwrite kubernetes-cli
 
-echo -e "${COLOR_GREEN}Ready to use Homebrew!${COLOR_RESET}"
+__info_msg "Upgrading installed formulae and casks..."
+brew upgrade
+
+__info_msg "Cleaning up Homebrew..."
+brew cleanup
+
+__info_msg "Ready to use Homebrew!"

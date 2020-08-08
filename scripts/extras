@@ -1,14 +1,35 @@
 #!/bin/bash
 set -euo pipefail
 
-# install dircolor scheme
-curl -fsL \
+# define output colors
+readonly COLOR_RED='\033[0;31m'
+readonly COLOR_ORANGE='\033[0;33m'
+readonly COLOR_GREEN='\033[0;32m'
+readonly COLOR_RESET='\033[0m'
+
+function __info_msg() {
+  echo -e "${COLOR_GREEN}I:${COLOR_RESET} $1"
+}
+
+function __warning_msg() {
+  echo -e "${COLOR_ORANGE}W:${COLOR_RESET} $1"
+}
+
+function __error_msg() {
+  echo -e "${COLOR_RED}E:${COLOR_RESET} $1"
+}
+
+__info_msg "Installing dircolor scheme..."
+curl -fSsL \
   -o $HOME/.dircolors \
   https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.256dark
 
-# install iTerm themes
+__info_msg "Installing iTerm themes..."
 mkdir -p ~/.iterm-themes
-curl -fsL \
+curl -fSsL \
   -o $HOME/.iterm-themes/Afterglow.itermcolors \
   https://raw.githubusercontent.com/mbadolato/iTerm2-Color-Schemes/master/schemes/Afterglow.itermcolors
   # or use any of https://github.com/mbadolato/iTerm2-Color-Schemes
+
+__info_msg "Installing gopls (the official Go language server)..."
+GO111MODULE=on go get golang.org/x/tools/gopls@latest
