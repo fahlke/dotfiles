@@ -104,6 +104,19 @@ tee "$HOME/Library/Application Support/Code/User/settings.json" >/dev/null <<'EO
     "enabled": true,
     "delay": 500
   },
+  "go.editor.formatOnSave": true,
+  "go.editor.snippetSuggestions": "none",
+  "go.editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+  },
+  "go.mod.editor.formatOnSave": true,
+  "go.mod.editor.codeActionsOnSave": {
+      "source.organizeImports": true,
+  },
+  "gopls": {
+    "usePlaceholders": true,
+    "staticcheck": false,
+  },
   
   // kubernetes configuration
   "vs-kubernetes": {
