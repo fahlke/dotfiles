@@ -8,8 +8,6 @@ My dotfiles for macOS including zsh configuration.
 
     git clone -b master https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
 
-    $HOME/.dotfiles/scripts/symlinks
     $HOME/.dotfiles/scripts/apps
     $HOME/.dotfiles/scripts/extras
-
- 
+    $HOME/.dotfiles/scripts/symlinks

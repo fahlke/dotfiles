@@ -1,0 +1,149 @@
+#!/bin/bash
+set -euo pipefail
+
+# define output colors
+readonly COLOR_RED='\033[0;31m'
+readonly COLOR_ORANGE='\033[0;33m'
+readonly COLOR_GREEN='\033[0;32m'
+readonly COLOR_RESET='\033[0m'
+
+function __info_msg() {
+  echo -e "${COLOR_GREEN}I:${COLOR_RESET} $1"
+}
+
+function __warning_msg() {
+  echo -e "${COLOR_ORANGE}W:${COLOR_RESET} $1"
+}
+
+function __error_msg() {
+  echo -e "${COLOR_RED}E:${COLOR_RESET} $1"
+}
+
+__info_msg "Installing Visual Studio Code extensions..."
+declare VSCODE_EXTENSIONS=(
+  "vscode-icons-team.vscode-icons"
+  "redhat.vscode-yaml"
+  "ms-kubernetes-tools.kind-vscode"
+  "ms-kubernetes-tools.vscode-kubernetes-tools"
+  "Equinusocio.vsc-material-theme"
+  "golang.Go"
+)
+
+for EXTENSION in "${VSCODE_EXTENSIONS[@]}"; do
+  code --install-extension "${EXTENSION}" --force
+done
+
+__info_msg "Configuring Visual Studio Code user settings..."
+mkdir -p "$HOME/Library/Application Support/Code/User"
+# https://code.visualstudio.com/docs/getstarted/settings#_default-settings
+tee "$HOME/Library/Application Support/Code/User/settings.json" >/dev/null <<'EOF'
+{
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.startupEditor": "none",
+  "workbench.colorCustomizations": {
+    "activityBarBadge.background": "#C6FF00",
+    "list.activeSelectionForeground": "#C6FF00",
+    "list.inactiveSelectionForeground": "#C6FF00",
+    "list.highlightForeground": "#C6FF00",
+    "scrollbarSlider.activeBackground": "#C6FF0050",
+    "editorSuggestWidget.highlightForeground": "#C6FF00",
+    "textLink.foreground": "#C6FF00",
+    "progressBar.background": "#C6FF00",
+    "pickerGroup.foreground": "#C6FF00",
+    "tab.activeBorder": "#C6FF00",
+    "notificationLink.foreground": "#C6FF00"
+  },
+  "workbench.colorTheme": "Material Theme Darker High Contrast",
+  "window.newWindowDimensions": "fullscreen",
+  "editor.tokenColorCustomizations": {
+    "[Material Theme Darker High Contrast]": {
+      "comments": "#5A5A5A"
+    },
+  },
+  
+  // Disable telemetry and crash reporting
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  
+  // Disable automatic updates
+  "update.mode": "manual",
+  "update.showReleaseNotes": false,
+  
+  // Font settings
+  "editor.fontFamily": "'SauceCodePro Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontSize": 16,
+  "editor.lineHeight": 26,
+  "editor.fontLigatures": true,
+  "explorer.decorations.badges": false,
+  
+  // Terminal settings
+  "terminal.integrated.fontFamily": "'SauceCodePro Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.setLocaleVariables": true,
+  "terminal.integrated.scrollback": 1000,
+  "terminal.integrated.shell.linux": "/bin/zsh",
+  "terminal.integrated.env.linux": {},
+  "terminal.integrated.shellArgs.linux": ["-l"],
+  "terminal.integrated.shell.osx": "/usr/local/bin/zsh",
+  "terminal.integrated.env.osx": {},
+  "terminal.integrated.shellArgs.osx": ["-l"],
+  
+  // Go configuration
+  "go.autocompleteUnimportedPackages": true,
+  "go.coverOnSave": false,
+  "go.docsTool": "gogetdoc",
+  "go.lintTool": "golangci-lint",
+  "go.formatTool": "goreturns",
+  "go.useLanguageServer": true,
+  "go.testEnvVars": {},
+  "go.testFlags": ["-v"],
+  "go.testOnSave": true,
+  "go.useCodeSnippetsOnFunctionSuggest": true,
+  "go.useCodeSnippetsOnFunctionSuggestWithoutType": false,
+  "go.liveErrors": {
+    "enabled": true,
+    "delay": 500
+  },
+  
+  // kubernetes configuration
+  "vs-kubernetes": {
+    "vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
+    "vs-kubernetes.helm-path": "/usr/local/bin/helm"
+  },
+}
+EOF
+
+__info_msg "Configuring Visual Studio Code user keybindings..."
+tee "$HOME/Library/Application Support/Code/User/keybindings.json" >/dev/null <<'EOF'
+[
+  { "key": "shift+cmd+c shift+cmd+c", "command": "terminalHere.create" },
+  { "key": "shift+cmd+c shift+cmd+c", "command": "workbench.action.terminal.kill", "when": "terminalFocus" },
+  
+  { "key": "shift+cmd+d shift+cmd+d", "command": "workbench.view.debug" },
+  { "key": "shift+cmd+d", "command": "-workbench.view.debug" },
+  
+  { "key": "shift+cmd+e shift+cmd+e", "command": "workbench.view.explorer" },
+  { "key": "shift+cmd+e", "command": "-workbench.view.explorer" },
+  
+  { "key": "shift+cmd+s shift+cmd+s", "command": "workbench.view.search", "when": "!searchViewletVisible" },
+  { "key": "shift+cmd+f", "command": "-workbench.view.search", "when": "!searchViewletVisible" },
+  
+  { "key": "shift+cmd+x shift+cmd+x", "command": "workbench.view.extensions" },
+  { "key": "shift+cmd+x", "command": "-workbench.view.extensions" },
+  
+  { "key": "shift+cmd+k shift+cmd+k", "command": "workbench.view.extension.kubernetesView" },
+  
+  { "key": "shift+cmd+1 shift+cmd+1", "command": "workbench.action.editorLayoutSingle" },
+  
+  { "key": "shift+cmd+2 shift+cmd+2", "command": "workbench.action.splitEditorRight" },
+  { "key": "shift+cmd+2 shift+cmd+2", "command": "workbench.action.moveEditorToRightGroup" },
+  
+  { "key": "shift+cmd+m shift+cmd+m", "command": "workbench.action.toggleMaximizedPanel" },
+  
+  { "key": "shift+cmd+m shift+cmd+m", "command": "workbench.action.toggleMaximizedPanel" },
+  { "key": "shift+cmd+p shift+cmd+p", "command": "workbench.action.togglePanel" },
+  { "key": "cmd+j", "command": "-workbench.action.togglePanel" },
+]
+EOF
+
+__info_msg "Ready to use Visual Studio Code!"
