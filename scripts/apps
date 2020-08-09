@@ -38,7 +38,7 @@ tap "mas-cli/tap"
 
 # programming languages and utilities
 brew "go"
-cask "goland"
+cask "goland", auto_updates: false
 cask "visual-studio-code"
 cask "insomnia"
 cask "google-cloud-sdk"
