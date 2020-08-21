@@ -3,6 +3,9 @@ declare -g NUM_WORKER=${2:-2}
 declare -g KIND_CLUSTER_NODE_IMAGE=${3:-"kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"}
 declare -g KIND_CLUSTER_CONF=""
 
+# Will create a Kind cluster with one control-plane node and two worker nodes by default.
+# Can be overwritten by supplying the number of control-plane and worker nodes.
+# e.g. `start 2 3` will launch two control-plane nodes and three worker nodes.
 kind-up() {
   NUM_CONTROLLER=${1:-"${NUM_CONTROLLER}"}
   NUM_WORKER=${2:-"${NUM_WORKER}"}
