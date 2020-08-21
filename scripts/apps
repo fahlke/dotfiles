@@ -38,7 +38,7 @@ tap "mas-cli/tap"
 
 # programming languages and utilities
 brew "go"
-cask "goland", auto_updates: false
+cask "goland"
 cask "visual-studio-code"
 cask "insomnia"
 cask "google-cloud-sdk"
@@ -55,6 +55,7 @@ brew "kubernetes-cli", link: true
 brew "stern"
 brew "k9s"
 brew "kubebuilder"
+cask "lens"
 
 # system essentials
 cask "docker"
@@ -111,11 +112,15 @@ cask "spotify"
 # video tools
 mas "DaVinci Resolve", id: 571213070
 
+## photo tools
+#mas "Luminar 4", id: 1484647920
+
 # office tools
 mas "Pages",   id: 409201541
 mas "Numbers", id: 409203825
 mas "Keynote", id: 409183694
 mas "Slack",   id: 803453959
+cask "discord"
 EOF
 
 # install Homebrew
@@ -128,6 +133,9 @@ fi
 
 __info_msg "Disabling Homebrew analytics..."
 brew analytics off
+
+__info_msg "Cleaning up Homebrew..."
+brew cleanup
 
 __info_msg "Verifying Homebrew installation..."
 brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
