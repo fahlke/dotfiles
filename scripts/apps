@@ -43,7 +43,6 @@ cask "visual-studio-code"
 cask "insomnia"
 cask "google-cloud-sdk"
 brew "golangci-lint"
-brew "npm"
 
 # kubernetes
 brew "kind"
@@ -67,6 +66,7 @@ cask "zoomus"
 cask "slack"
 cask "spotify"
 cask "airserver"
+cask "monitorcontrol"
 
 # system utilities
 brew "mas"
