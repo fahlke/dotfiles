@@ -51,7 +51,8 @@ path() {
 
 # fix for "zsh compinit: insecure directories"
 fix-compaudit() {
-  chmod go-w "$(brew --prefix)/share"
+  compaudit 2>/dev/null | xargs chmod g-w
+  #chmod go-w "$(brew --prefix)/share"
 }
 
 # Mac specific functions
