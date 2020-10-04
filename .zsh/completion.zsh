@@ -10,8 +10,6 @@ if type brew &>/dev/null; then
   fpath=($(brew --prefix)/share/zsh/site-functions $fpath)
 fi
 
-complete -o nospace -C /usr/local/bin/kustomize kustomize
-
 autoload -Uz compinit && compinit
 zmodload -i zsh/complist
 
