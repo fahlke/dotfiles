@@ -55,6 +55,7 @@ brew "stern"
 brew "k9s"
 brew "kubebuilder"
 cask "lens"
+brew "istioctl"
 
 # system essentials
 cask "docker"
@@ -70,10 +71,9 @@ cask "monitorcontrol"
 # system utilities
 brew "mas"
 brew "htop", url: 'https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-completions.rb'
-brew "zsh-completions", url: 'https://github.com/romkatv/powerlevel10k#homebrew'
-brew "powerlevel10k"
-brew "zsh-syntax-highlighting"
-brew "zsh-completions"
+brew "zsh-completions", url: 'https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh'
+brew "zsh-syntax-highlighting", url: 'https://formulae.brew.sh/formula/zsh-syntax-highlighting'
+brew "powerlevel10k", url: 'https://github.com/romkatv/powerlevel10k#homebrew'
 brew "ansible"
 brew "arp-scan"
 brew "nmap"
