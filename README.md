@@ -6,7 +6,7 @@ My dotfiles for macOS including zsh configuration.
 
 ### Setup dotfiles and configure ZSH
 
-    git clone -b master https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
+    git clone -b main https://github.com/fahlke/dotfiles.git $HOME/.dotfiles/
 
     $HOME/.dotfiles/scripts/symlinks
     $HOME/.dotfiles/scripts/apps
