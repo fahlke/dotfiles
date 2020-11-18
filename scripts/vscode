@@ -27,6 +27,7 @@ declare VSCODE_EXTENSIONS=(
   "ms-kubernetes-tools.vscode-kubernetes-tools"
   "Equinusocio.vsc-material-theme"
   "golang.Go"
+  "HashiCorp.terraform"
 )
 
 for EXTENSION in "${VSCODE_EXTENSIONS[@]}"; do
