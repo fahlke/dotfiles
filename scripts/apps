@@ -35,6 +35,7 @@ tap "homebrew/cask-fonts"
 tap "romkatv/powerlevel10k"
 tap "golangci/tap"
 tap "mas-cli/tap"
+tap "hashicorp/tap"
 
 # programming languages and utilities
 brew "go"
@@ -42,7 +43,10 @@ cask "goland"
 cask "visual-studio-code"
 cask "insomnia"
 cask "google-cloud-sdk"
+brew "awscli"
 brew "golangci-lint"
+brew "terraform-ls"
+brew "aws-iam-authenticator"
 
 # kubernetes
 brew "kind"
@@ -62,7 +66,7 @@ cask "docker"
 brew "docker-completion"
 cask "1password"
 cask "istat-menus"
-cask "iterm2"
+cask "iterm2", auto_updates: false
 cask "slack"
 cask "spotify"
 cask "airserver"
@@ -125,7 +129,7 @@ EOF
 # install Homebrew
 if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
   __info_msg "Installing Homebrew (might need sudo)..."
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 else
   __info_msg "Homebrew already installed, skipping installation..."
 fi
@@ -136,8 +140,8 @@ brew analytics off
 __info_msg "Cleaning up Homebrew..."
 brew cleanup
 
-__info_msg "Verifying Homebrew installation..."
-brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
+#__info_msg "Verifying Homebrew installation..."
+#brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
 
 __info_msg "Updating Homebrew..."
 brew update || (__error_msg "Homebrew update failed! Exiting!"; exit 1)
