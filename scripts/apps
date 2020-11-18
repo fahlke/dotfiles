@@ -12,6 +12,16 @@ readonly COLOR_ORANGE='\033[0;33m'
 readonly COLOR_GREEN='\033[0;32m'
 readonly COLOR_RESET='\033[0m'
 
+declare FORCE_INSTALL_HOMEBREW=false
+
+while getopts ":fh" opt; do
+  case $opt in
+    f)  FORCE_INSTALL_HOMEBREW=true;;
+    h)  echo "use -f to install homebrew"; exit 0;;
+    \?) echo "Invalid option -$OPTARG, run with -h for help" >&2; exit 1;;
+  esac
+done
+
 function __info_msg() {
   echo -e "${COLOR_GREEN}I:${COLOR_RESET} $1"
 }
@@ -22,6 +32,10 @@ function __warning_msg() {
 
 function __error_msg() {
   echo -e "${COLOR_RED}E:${COLOR_RESET} $1"
+}
+
+function __install_homebrew() {
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 }
 
 # packages to install with Homebrew (the ! ignores exit code 1 from read)
@@ -127,11 +141,16 @@ cask "discord"
 EOF
 
 # install Homebrew
-if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
+if [[ ${FORCE_INSTALL_HOMEBREW} == true ]]; then
   __info_msg "Installing Homebrew (might need sudo)..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  __install_homebrew
 else
-  __info_msg "Homebrew already installed, skipping installation..."
+  if [[ $(command -v brew >/dev/null; echo $?) -ne 0 ]]; then
+    __info_msg "Installing Homebrew (might need sudo)..."
+    __install_homebrew
+  else
+    __info_msg "Homebrew already installed, skipping installation..."
+  fi
 fi
 
 __info_msg "Disabling Homebrew analytics..."
