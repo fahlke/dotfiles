@@ -17,10 +17,11 @@ declare DO_BREW_DOCTOR=false
 declare FORCE_INSTALL_HOMEBREW=false
 
 function __usage() {
-  echo "usage: apps [-c | -d | -f]"
+  echo "usage: apps [-c] [-d] [-f] [-h]"
   echo "  -c additionally run \`brew cleanup\`"
   echo "  -d additionally run \`brew doctor\`"
   echo "  -f force the installation of homebrew over an exiting installation"
+  echo "  -h show this usage text"
 }
 
 while getopts ":cdfh" opt; do
