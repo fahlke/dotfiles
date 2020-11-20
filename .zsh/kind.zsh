@@ -1,15 +1,26 @@
-declare -g NUM_CONTROLLER=${1:-1}
-declare -g NUM_WORKER=${2:-2}
-declare -g KIND_CLUSTER_NODE_IMAGE=${3:-"kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"}
-declare -g KIND_CLUSTER_CONF=""
+# Will create a Kind cluster with one control-plane node and one worker node by default.
+function __usage() {
+  echo "usage: apps [-c] [-w] [-i] [-h]"
+  echo "  -c number of controller nodes"
+  echo "  -w number of worker nodes"
+  echo "  -i container image to use for booting the cluster nodes"
+  echo "  -h show this usage text"
+}
 
-# Will create a Kind cluster with one control-plane node and two worker nodes by default.
-# Can be overwritten by supplying the number of control-plane and worker nodes.
-# e.g. `start 2 3` will launch two control-plane nodes and three worker nodes.
 kind-up() {
-  NUM_CONTROLLER=${1:-"${NUM_CONTROLLER}"}
-  NUM_WORKER=${2:-"${NUM_WORKER}"}
-  KIND_CLUSTER_NODE_IMAGE=${3:-"${KIND_CLUSTER_NODE_IMAGE}"}
+  NUM_CONTROLLER="1"
+  NUM_WORKER="1"
+  KIND_CLUSTER_NODE_IMAGE="kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+
+  while getopts ":c:w:i:h" opt; do
+    case $opt in
+      c)  NUM_CONTROLLER=${OPTARG};;
+      w)  NUM_WORKER=${OPTARG};;
+      i)  KIND_CLUSTER_NODE_IMAGE=${OPTARG};;
+      h)  __usage; return;;
+      \?) echo "Invalid option -$OPTARG, run with -h for help" >&2; return;;
+    esac
+  done
 
   ! read -r -d '' KIND_CLUSTER_CONF <<EOF
 kind: Cluster
