@@ -12,12 +12,23 @@ readonly COLOR_ORANGE='\033[0;33m'
 readonly COLOR_GREEN='\033[0;32m'
 readonly COLOR_RESET='\033[0m'
 
+declare DO_BREW_CLEANUP=false
+declare DO_BREW_DOCTOR=false
 declare FORCE_INSTALL_HOMEBREW=false
 
-while getopts ":fh" opt; do
+function __usage() {
+  echo "usage: apps [-c | -d | -f]"
+  echo "  -c additionally run \`brew cleanup\`"
+  echo "  -d additionally run \`brew doctor\`"
+  echo "  -f force the installation of homebrew over an exiting installation"
+}
+
+while getopts ":cdfh" opt; do
   case $opt in
+    c)  DO_BREW_CLEANUP=true;;
+    d)  DO_BREW_DOCTOR=true;;
     f)  FORCE_INSTALL_HOMEBREW=true;;
-    h)  echo "use -f to install homebrew"; exit 0;;
+    h)  __usage; exit 0;;
     \?) echo "Invalid option -$OPTARG, run with -h for help" >&2; exit 1;;
   esac
 done
@@ -80,7 +91,7 @@ cask "docker"
 brew "docker-completion"
 cask "1password"
 cask "istat-menus"
-cask "iterm2", auto_updates: false
+cask "iterm2"
 cask "slack"
 cask "spotify"
 cask "airserver"
@@ -128,6 +139,7 @@ cask "spotify"
 
 # video tools
 mas "DaVinci Resolve", id: 571213070
+cask "streamlabs-obs"
 
 ## photo tools
 #mas "Luminar 4", id: 1484647920
@@ -159,8 +171,14 @@ brew analytics off
 __info_msg "Cleaning up Homebrew..."
 brew cleanup
 
-#__info_msg "Verifying Homebrew installation..."
-#brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
+if [[ ${DO_BREW_DOCTOR} == true ]]; then
+  __info_msg "Verifying Homebrew installation..."
+  brew doctor || (__error_msg "Homebrew setup incomplete! Exiting!"; exit 1)
+fi
+
+__info_msg "Checking for outdated formulars and casks..."
+brew outdated --formula || true
+brew outdated --cask || true
 
 __info_msg "Updating Homebrew..."
 brew update || (__error_msg "Homebrew update failed! Exiting!"; exit 1)
@@ -172,7 +190,9 @@ brew unlink kubernetes-cli && brew link --overwrite kubernetes-cli
 __info_msg "Upgrading installed formulae and casks..."
 brew upgrade
 
-__info_msg "Cleaning up Homebrew..."
-brew cleanup
+if [[ ${DO_BREW_CLEANUP} == true ]]; then
+  __info_msg "Cleaning up Homebrew..."
+  brew cleanup
+fi
 
 __info_msg "Ready to use Homebrew!"
