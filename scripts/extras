@@ -32,5 +32,5 @@ curl -fSsL \
   # or use any of https://github.com/mbadolato/iTerm2-Color-Schemes
 
 __info_msg "Installing gopls (the official Go language server)..."
-GO111MODULE=on go get golang.org/x/tools/gopls@latest
-GO111MODULE=on go get golang.org/x/tools/cmd/goimports@latest
+GO111MODULE=on go install golang.org/x/tools/gopls@latest
+GO111MODULE=on go install golang.org/x/tools/cmd/goimports@latest

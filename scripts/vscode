@@ -72,8 +72,8 @@ tee "$HOME/Library/Application Support/Code/User/settings.json" >/dev/null <<'EO
   
   // Font settings
   "editor.fontFamily": "'SauceCodePro Nerd Font', Menlo, Monaco, 'Courier New', monospace",
-  "editor.fontSize": 16,
-  "editor.lineHeight": 26,
+  "editor.fontSize": 12,
+  "editor.lineHeight": 20,
   "editor.fontLigatures": true,
   "explorer.decorations.badges": false,
   

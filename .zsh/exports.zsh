@@ -1,7 +1,7 @@
 # Currently this path is appended to dynamically when picking a ruby version
 # zshenv has already started PATH with rbenv so append only here
 export PATH=$PATH:$HOME/bin
-export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/opt/homebrew/bin
 
 # This resolves issues install the mysql, postgres, and other gems with native non universal binary extensions
 export ARCHFLAGS='-arch x86_64'
@@ -19,10 +19,8 @@ export LANG=en_US.UTF-8
 # GOPATH export for sublime
 #export GOPATH=$(go env GOPATH)
 export GOPATH="$HOME/go"
-export GOROOT="/usr/local/opt/go/libexec"
-export PATH="$GOPATH/bin:$PATH"
-
-export PATH="/usr/local/sbin:$PATH"
+export GOROOT="/opt/homebrew/opt/go/libexec/"
+export PATH="$PATH:$GOPATH/bin"
 
 # gcloud
 #source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'

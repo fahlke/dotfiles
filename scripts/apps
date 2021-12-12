@@ -4,7 +4,7 @@ set -euo pipefail
 # usage: /bin/bash <(curl -fsSL http://sre.fahlke.io/apps)
 
 # temporary setup path for Homebrew
-export PATH="/usr/local/bin:$PATH"
+export PATH="$PATH:/opt/homebrew/bin"
 
 # define output colors
 readonly COLOR_RED='\033[0;31m'
@@ -48,6 +48,8 @@ function __error_msg() {
 
 function __install_homebrew() {
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 }
 
 # packages to install with Homebrew (the ! ignores exit code 1 from read)
@@ -69,10 +71,10 @@ cask "goland"
 cask "visual-studio-code"
 cask "insomnia"
 cask "google-cloud-sdk"
-brew "awscli"
 brew "golangci-lint"
 brew "terraform-ls"
-brew "aws-iam-authenticator"
+brew "awscli"
+brew "git-remote-codecommit"
 
 # kubernetes
 brew "kind"
@@ -84,22 +86,19 @@ brew "kubernetes-cli", link: true
 brew "stern"
 brew "k9s"
 brew "kubebuilder"
-cask "lens"
 brew "istioctl"
 
 # system essentials
-cask "docker"
-brew "docker-completion"
+brew "podman", url: https://podman.io/blogs/2021/09/06/podman-on-macs.html#user-experience-on-macos
 cask "1password"
-cask "istat-menus"
+#cask "istat-menus"
 cask "iterm2"
 cask "slack"
-cask "spotify"
 cask "airserver"
 cask "monitorcontrol"
+cask "google-chrome"
 
 # system utilities
-brew "mas"
 brew "htop", url: 'https://github.com/Homebrew/homebrew-core/blob/master/Formula/zsh-completions.rb'
 brew "zsh-completions", url: 'https://docs.brew.sh/Shell-Completion#configuring-completions-in-zsh'
 brew "zsh-syntax-highlighting", url: 'https://formulae.brew.sh/formula/zsh-syntax-highlighting'
@@ -139,17 +138,13 @@ cask "native-access"
 cask "spotify"
 
 # video tools
-mas "DaVinci Resolve", id: 571213070
-cask "streamlabs-obs"
-
-## photo tools
-#mas "Luminar 4", id: 1484647920
+#mas "DaVinci Resolve", id: 571213070
+#cask "streamlabs-obs"
 
 # office tools
-mas "Pages",   id: 409201541
-mas "Numbers", id: 409203825
-mas "Keynote", id: 409183694
-mas "Slack",   id: 803453959
+#mas "Pages",   id: 409201541
+#mas "Numbers", id: 409203825
+#mas "Keynote", id: 409183694
 cask "discord"
 EOF
 
