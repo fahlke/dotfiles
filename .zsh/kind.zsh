@@ -7,10 +7,25 @@ function __usage() {
   echo "  -h show this usage text"
 }
 
+# podman
+# ------------------------------
+# See: https://github.com/kubernetes-sigs/kind/issues/2445#issuecomment-984153923
+#
+# podman machine init --cpus 4 --memory 10240 --disk-size 50
+# podman system connection default podman-machine-default-root
+# ...start Kind cluster...
+# sed -i '' -E 's#(https:\/\/:)([0-9]{5})#https:\/\/localhost:\2#g' ~/.kube/config
+
+kind-fix-kubeconfig() {
+  kind export kubeconfig
+  # fix the server address for the Kind cluster
+  sed -i '' -E 's#(https:\/\/:)([0-9]{5})#https:\/\/localhost:\2#g' ~/.kube/config
+}
+
 kind-up() {
   NUM_CONTROLLER="1"
   NUM_WORKER="1"
-  KIND_CLUSTER_NODE_IMAGE="kindest/node:v1.18.6@sha256:b9f76dd2d7479edcfad9b4f636077c606e1033a2faf54a8e1dee6509794ce87d"
+  KIND_CLUSTER_NODE_IMAGE="docker.io/kindest/node:v1.21.1@sha256:f08bcc2d38416fa58b9857a1000dd69062b0c3024dcbd696373ea026abe38bbc"
 
   while getopts ":c:w:i:h" opt; do
     case $opt in
@@ -28,6 +43,7 @@ apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   podSubnet: "10.244.0.0/16"
   serviceSubnet: "10.96.0.0/12"
+  apiServerAddress: "0.0.0.0"
 nodes:
 $(if [[ ${NUM_CONTROLLER} -ge 1 ]]; then
   yes "- role: control-plane" | head -n ${NUM_CONTROLLER}
@@ -42,6 +58,8 @@ EOF
   kind create cluster \
     --image "${KIND_CLUSTER_NODE_IMAGE}" \
     --config=- <<<"${KIND_CLUSTER_CONF}"
+
+  kind-fix-kubeconfig
 }
 
 kind-destroy-all() {
