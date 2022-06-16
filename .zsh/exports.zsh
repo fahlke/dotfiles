@@ -3,6 +3,9 @@
 export PATH=$PATH:$HOME/bin
 export PATH=$PATH:/opt/homebrew/bin
 
+# this might be needed for Rancher Desktop
+#export PATH=$PATH:$HOME/.rd/bin
+
 # This resolves issues install the mysql, postgres, and other gems with native non universal binary extensions
 export ARCHFLAGS='-arch x86_64'
 

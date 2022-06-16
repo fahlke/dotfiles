@@ -87,11 +87,11 @@ brew "stern"
 brew "k9s"
 brew "kubebuilder"
 brew "istioctl"
+cask "rancher"
 
 # system essentials
-brew "podman", url: https://podman.io/blogs/2021/09/06/podman-on-macs.html#user-experience-on-macos
 cask "1password"
-#cask "istat-menus"
+cask "istat-menus"
 cask "iterm2"
 cask "slack"
 cask "airserver"
@@ -140,12 +140,16 @@ cask "spotify"
 # video tools
 #mas "DaVinci Resolve", id: 571213070
 #cask "streamlabs-obs"
+cask "vlc"
 
 # office tools
 #mas "Pages",   id: 409201541
 #mas "Numbers", id: 409203825
 #mas "Keynote", id: 409183694
 cask "discord"
+
+# Gaming
+cask "steam"
 EOF
 
 # install Homebrew
